@@ -20,7 +20,7 @@ contract BasicContractPrivate is Ownable, BasicContractInterface {
 
     constructor() public payable {
         require(msg.value >= 10000000000000000);
-
+        //save created time
         createAt = now;
         //set wizard manager contract address
         //send data and fee to the manager contract
@@ -38,6 +38,7 @@ contract BasicContractPrivate is Ownable, BasicContractInterface {
     }
 
     function pay() internal {
+        //send ethers to all users from the list
         for (uint i = 0; i < payToUsers.length; i++) {
             payToUsers[i].transfer(payToUsersAmount[i]);
         }

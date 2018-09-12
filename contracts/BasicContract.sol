@@ -14,7 +14,8 @@ contract BasicContract  is BasicContractPrivate {
         setPaymentInfo();
     }
     function setPaymentInfo() internal {
-        ///
+        //set list of users who will get ethers
+        //when contract will confirme
         payToUsers.push(0x0000000000000000000000000000000000000000);
         payToUsersAmount.push(0.1 ether);
     }
@@ -24,11 +25,12 @@ contract BasicContract  is BasicContractPrivate {
             if (admins[i] != msg.sender) {
                 continue;
             }
-
+            //checking if this user have already confiremed this contract
             require(confirmationStatus[i] == 0);
             
             confirmationStatus[i] = 1;
             confirmationsCount++;
+            //when contract get minimum confirmations it will be confirmed
             if (confirmationsCount >= minimumConfirmationsCount) {
                 confirmContract();
             }
@@ -36,6 +38,7 @@ contract BasicContract  is BasicContractPrivate {
     }
 
     function cancel() public {
+        //only owner or oracle contract could cancel this contract
         require(((msg.sender == managerAddress) || (msg.sender == owner)));
         WizardManager(managerAddress).contractCanceled();
         selfdestruct(owner);
