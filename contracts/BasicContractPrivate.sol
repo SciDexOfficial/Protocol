@@ -10,21 +10,24 @@ contract BasicContractPrivate is Ownable, BasicContractInterface {
     address internal managerAddress = 0x2e61d70764aC3067835C7936617FbA3a93cF26e0;
 
     uint createAt;
+    uint constant serviceFee = 0.01 ether;
 
     bool contractConfirmationStatus = false;
-    string rule = "";
-    string contractType = "";
+    //set rule
+    string constant rule = "";
+    //set type
+    string constant contractType = "";
     
     address[] internal payToUsers;
     uint[] internal payToUsersAmount;
 
     constructor() public payable {
-        require(msg.value >= 10000000000000000);
+        require(msg.value >= serviceFee);
         //save created time
         createAt = now;
         //set wizard manager contract address
         //send data and fee to the manager contract
-        WizardManager(managerAddress).createdNewContract.value(10000000000000000)(contractType, rule);
+        WizardManager(managerAddress).createdNewContract.value(serviceFee)(contractType, rule);
     }
 
     function confirmContract() internal {

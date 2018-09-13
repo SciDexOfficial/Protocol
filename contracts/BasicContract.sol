@@ -30,6 +30,9 @@ contract BasicContract  is BasicContractPrivate {
             
             confirmationStatus[i] = 1;
             confirmationsCount++;
+            
+            //
+            WizardManager(managerAddress).userConfirmedContract(msg.sender);
             //when contract get minimum confirmations it will be confirmed
             if (confirmationsCount >= minimumConfirmationsCount) {
                 confirmContract();

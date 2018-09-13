@@ -10,6 +10,7 @@ contract WizardManager is Ownable {
     event createdNewContractEvent(address contractAddress, string contractType, string data);
     event contractConfirmedEvent(address contractAddress);
     event contractCanceledEvent(address contractAddress);
+    event userConfirmedContractEvent(address user, address contracAddress);
 
     function createdNewContract(string contractType, string data) public payable {
         emit createdNewContractEvent(msg.sender, contractType, data);
@@ -28,5 +29,8 @@ contract WizardManager is Ownable {
     }
     function cancelContract(address contractAddress) public onlyOwner {
         BasicContractInterface(contractAddress).cancel();
+    }
+    function userConfirmedContract(address user) public {
+        emit userConfirmedContractEvent(user, msg.sender);
     }
 }
