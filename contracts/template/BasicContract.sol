@@ -9,7 +9,7 @@ contract BasicContract  is BasicContractPrivate {
     address[] private decliners;
 
     mapping (uint => uint) private confirmationStatus;
-    uint minimumConfirmationsCount = 1;
+    uint minimumConfirmationsCount = {{ minimum_confirmations_count }};
 
     uint confirmationsCount = 0;
     
@@ -18,26 +18,35 @@ contract BasicContract  is BasicContractPrivate {
     }
 
     function setAdmins() private {
-        admins.push(0x0000000000000000000000000000000000000000);
+        {% for admin in admins_list %}
+        admins.push({{ admin }});
+        {% endfor %}
     }
-
     function setDecliners() private {
-        decliners.push(0x0000000000000000000000000000000000000000);
+        {% for decliner in decliners_list %}
+        decliners.push({{ decliner }});
+        {% endfor %}
     }
-
     function getAdmins() public view returns(address[] memory) {
         return admins;
     }
-    
     function getDecliners() public view returns(address[] memory) {
         return decliners;
+    }
+
+    function getContractRules() public view returns(string) {
+        return rule;
     }
 
     function setPaymentInfo() internal {
         //set list of users who will get ethers
         //when contract will confirme
-        payToUsers.push(0x0000000000000000000000000000000000000000);
-        payToUsersAmount.push(0.1 ether);
+        {% for user in users_list %}
+        payToUsers.push({{ user }});
+        {% endfor %}
+        {% for amount in amounts_list %}
+        payToUsersAmount.push({{ amount }} ether);
+        {% endfor %}
     }
 
     function getPaymentInfo() public view returns(address[] memory, uint[] memory) {
