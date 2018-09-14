@@ -1,17 +1,19 @@
-manager_address - address
+#Template variables
 
-service_fee - float
+**manager_address** - address
 
-rule - string(json)
+**service_fee** - float
 
-type - string
+**rule** - string(json)
 
-minimum_price - float
+**type** - string
 
-minimum_confirmations_count - int
+**minimum_price** - float
 
-admins_list - array of addresses
+**minimum_confirmations_count** - int
 
-decliners_list - array of addresses
+**admins_list** - array of addresses
 
-payments_list - array of structure. Fields: user, amount
+**decliners_list** - array of addresses
+
+**payments_list** - array of structure. Fields: user, amount
