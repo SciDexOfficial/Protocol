@@ -6,18 +6,39 @@ import "./BasicContractPrivate.sol";
 contract BasicContract  is BasicContractPrivate {
 
     address[] private admins;
+    address[] private decliners;
+
     mapping (uint => uint) private confirmationStatus;
     uint minimumConfirmationsCount = 1;
 
     uint confirmationsCount = 0;
+    
     constructor() public payable {
         setPaymentInfo();
     }
+
+    function setAdmins() private {
+        admins.push(0x0000000000000000000000000000000000000000);
+    }
+    function setDecliners() private {
+        decliners.push(0x0000000000000000000000000000000000000000);
+    }
+    function getAdmins() public view returns(address[] memory) {
+        return admins;
+    }
+    function getDecliners() public view returns(address[] memory) {
+        return decliners;
+    }
+
     function setPaymentInfo() internal {
         //set list of users who will get ethers
         //when contract will confirme
         payToUsers.push(0x0000000000000000000000000000000000000000);
         payToUsersAmount.push(0.1 ether);
+    }
+
+    function getPaymentInfo() public view returns(address[] memory, uint[] memory) {
+        return (payToUsers, payToUsersAmount);
     }
 
     function sendConfirmation() public {
@@ -41,9 +62,11 @@ contract BasicContract  is BasicContractPrivate {
     }
 
     function cancel() public {
-        //only owner or oracle contract could cancel this contract
-        require(((msg.sender == managerAddress) || (msg.sender == owner)));
-        WizardManager(managerAddress).contractCanceled();
-        selfdestruct(owner);
+        for (uint i = 0; i < decliners.length; i++) {
+            if (decliners[i] == msg.sender) {
+                WizardManager(managerAddress).contractCanceled();
+                selfdestruct(owner);
+            }
+        }
     }
 }

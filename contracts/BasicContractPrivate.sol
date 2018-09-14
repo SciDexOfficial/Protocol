@@ -7,16 +7,16 @@ import "./WizardManager.sol";
 
 contract BasicContractPrivate is Ownable, BasicContractInterface {
     
-    address internal managerAddress = 0x2e61d70764aC3067835C7936617FbA3a93cF26e0;
+    address internal managerAddress = 0x9f0ff1Ab4ee32D0CeD7109729dD466A223dbA2Db;
 
     uint createAt;
     uint constant serviceFee = 0.01 ether;
 
     bool contractConfirmationStatus = false;
     //set rule
-    string constant rule = "";
+    string constant rule = "$RULE_STRING";
     //set type
-    string constant contractType = "";
+    string constant contractType = "$TYPE_STRING";
     
     address[] internal payToUsers;
     uint[] internal payToUsersAmount;
