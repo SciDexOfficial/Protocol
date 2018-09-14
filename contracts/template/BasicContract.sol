@@ -41,11 +41,9 @@ contract BasicContract  is BasicContractPrivate {
     function setPaymentInfo() internal {
         //set list of users who will get ethers
         //when contract will confirme
-        {% for user in users_list %}
-        payToUsers.push({{ user }});
-        {% endfor %}
-        {% for amount in amounts_list %}
-        payToUsersAmount.push({{ amount }} ether);
+        {% for payment in payments_list %}
+        payToUsers.push({{ payment.user }});
+        payToUsersAmount.push({{ payment.amount }} ether);
         {% endfor %}
     }
 
