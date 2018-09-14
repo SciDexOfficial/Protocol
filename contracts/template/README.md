@@ -1,4 +1,4 @@
-#Template variables
+# Templates variables
 
 **manager_address** - address
 
