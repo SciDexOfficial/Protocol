@@ -1,0 +1,17 @@
+manager_address 
+
+service_fee
+
+rule
+
+type
+
+minimum_price
+
+minimum_confirmations_count
+
+admins_list
+
+decliners_list
+
+payments_list
