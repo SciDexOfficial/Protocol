@@ -15,10 +15,11 @@ contract WizardMainContract is Ownable {
         address[] payToUsers;
         uint[] payAmounts;
         uint minimumConfirmationsCount;
+        address owner;
     }
 
     //events
-    event createdNewContractEvent(uint contractIndex, string contractType, string data);
+    event createdNewContractEvent(uint contractIndex, string rule);
     event contractConfirmedEvent(uint contractIndex);
     event contractCanceledEvent(uint contractIndex);
     event userConfirmedContractEvent(address user, uint contractIndex);
@@ -40,12 +41,21 @@ contract WizardMainContract is Ownable {
         address[] payToUsers, 
         uint[] payAmounts, 
         uint minimumConfirmationsCount) public payable returns(uint index) {
+        uint payment = serviceFee;
+        for (uint i = 0; i < payAmounts.length; i++) {
+            payment = payment.add(payAmounts[i]);
+        }
+        // require(payment <= msg.value);
+        
+        // owner.transfer(serviceFee);
+        if (msg.value > payment) {
+            msg.sender.transfer(msg.value.sub(payment));
+        }
 
-        SubContract memory sc = SubContract(rule, admins, decliners, payToUsers, payAmounts, minimumConfirmationsCount);
+        SubContract memory sc = SubContract(rule, admins, decliners, payToUsers, payAmounts, minimumConfirmationsCount, msg.sender);
         index = subcontracts.push(sc) - 1;
+        emit createdNewContractEvent(index, rule);
     }
-
-    // function setCompletionRate(uint contractIndex, uint rate) public;
 
 
     function getAdmins(uint index) public view returns(address[] memory) {
@@ -82,6 +92,10 @@ contract WizardMainContract is Ownable {
             }
         }
     }
+    
+    function getRule(uint index) public view returns(string memory) {
+        return subcontracts[index].rule;
+    }
 
     function cancel(uint index) public {
         address[] memory decliners = subcontracts[index].decliners;
@@ -108,7 +122,7 @@ contract WizardMainContract is Ownable {
         completionRate[index] = rate;
     }
 
-    function pay(uint index) internal {
+    function pay(uint index) private {
         //send ethers to all users from the list
         address[] memory payToUsers = subcontracts[index].payToUsers;
         uint[] memory amounts = subcontracts[index].payAmounts;
