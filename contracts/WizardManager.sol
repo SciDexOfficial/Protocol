@@ -33,4 +33,8 @@ contract WizardManager is Ownable {
     function userConfirmedContract(address user) public {
         emit userConfirmedContractEvent(user, msg.sender);
     }
+
+    function setCompletionRate(address contractAddress, uint rate) public onlyOwner {
+        BasicContractInterface(contractAddress).setCompletionRate(rate);
+    }
 }

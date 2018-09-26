@@ -14,15 +14,17 @@ contract BasicContract  is BasicContractPrivate {
     uint confirmationsCount = 0;
     
     constructor() public payable {
+        setAdmins();
+        setDecliners();
         setPaymentInfo();
     }
 
     function setAdmins() private {
-        admins.push(0x0000000000000000000000000000000000000000);
+        admins.push(0x0000000000000000000000000000000000000001);
     }
 
     function setDecliners() private {
-        decliners.push(0x0000000000000000000000000000000000000000);
+        decliners.push(0x0000000000000000000000000000000000000001);
     }
 
     function getAdmins() public view returns(address[] memory) {
@@ -36,7 +38,7 @@ contract BasicContract  is BasicContractPrivate {
     function setPaymentInfo() internal {
         //set list of users who will get ethers
         //when contract will confirme
-        payToUsers.push(0x0000000000000000000000000000000000000000);
+        payToUsers.push(0x0000000000000000000000000000000000000001);
         payToUsersAmount.push(0.1 ether);
     }
 

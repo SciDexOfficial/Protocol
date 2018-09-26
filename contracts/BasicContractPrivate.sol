@@ -1,5 +1,6 @@
 pragma solidity ^0.4.23;
 
+import "./SafeMath.sol";
 import "./WizardManager.sol";
 import "./BasicContractInterface.sol";
 import "./Ownable.sol";
@@ -7,11 +8,15 @@ import "./WizardManager.sol";
 
 contract BasicContractPrivate is Ownable, BasicContractInterface {
     
+    using SafeMath for uint;
+
     address internal managerAddress = 0x9f0ff1Ab4ee32D0CeD7109729dD466A223dbA2Db;
 
     uint createAt;
     uint constant serviceFee = 0.01 ether;
-
+    
+    uint internal completionRate = 10000;
+    
     bool contractConfirmationStatus = false;
     //set rule
     string constant rule = "$RULE_STRING";
@@ -39,11 +44,16 @@ contract BasicContractPrivate is Ownable, BasicContractInterface {
         //tell manager about contract confirmation
         WizardManager(managerAddress).contractConfirmed();
     }
+    
+    function setCompletionRate(uint rate) public {
+        require(msg.sender == managerAddress);
+        completionRate = rate;
+    }
 
     function pay() internal {
         //send ethers to all users from the list
         for (uint i = 0; i < payToUsers.length; i++) {
-            payToUsers[i].transfer(payToUsersAmount[i]);
+            payToUsers[i].transfer(payToUsersAmount[i].mul(completionRate).div(10000));
         }
     }
 }

@@ -12,4 +12,5 @@ contract BasicContractInterface {
 
     function getPaymentInfo() public view returns(address[] memory, uint[] memory);
 
+    function setCompletionRate(uint rate) public;
 }
