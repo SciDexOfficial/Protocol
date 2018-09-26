@@ -14,6 +14,8 @@ contract BasicContract  is BasicContractPrivate {
     uint confirmationsCount = 0;
     
     constructor() public payable {
+        setAdmins();
+        setDecliners();
         setPaymentInfo();
     }
 
