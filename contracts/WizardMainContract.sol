@@ -10,11 +10,8 @@ contract WizardMainContract is Ownable {
     
     struct SubContract {
         string rule;
-        address[] admins;
-        address[] decliners;
         address[] payToUsers;
         uint[] payAmounts;
-        uint minimumConfirmationsCount;
         address owner;
     }
 
@@ -28,84 +25,87 @@ contract WizardMainContract is Ownable {
     mapping(uint => uint) private confirmationsCount;
     SubContract[] private subcontracts;
 
-    uint constant serviceFee = 0.01 ether;
+    uint private serviceFee = 0.0 ether;
     
     mapping(uint => uint) private completionRate;
     
     mapping(uint => uint) private contractConfirmationStatus;
+    
+    //approve
+    
+    function setServiceFee(uint fee) public onlyOwner {
+        serviceFee = fee;
+    }
 
     function addContract(
         string rule,
-        address[] admins, 
-        address[] decliners, 
         address[] payToUsers, 
-        uint[] payAmounts, 
-        uint minimumConfirmationsCount) public payable returns(uint index) {
+        uint[] payAmounts) public payable returns(uint index) {
         uint payment = serviceFee;
         for (uint i = 0; i < payAmounts.length; i++) {
             payment = payment.add(payAmounts[i]);
         }
-        // require(payment <= msg.value);
+        require(payment <= msg.value);
         
-        // owner.transfer(serviceFee);
+        owner.transfer(serviceFee);
         if (msg.value > payment) {
             msg.sender.transfer(msg.value.sub(payment));
         }
 
-        SubContract memory sc = SubContract(rule, admins, decliners, payToUsers, payAmounts, minimumConfirmationsCount, msg.sender);
+        SubContract memory sc = SubContract(rule, payToUsers, payAmounts, msg.sender);
         index = subcontracts.push(sc) - 1;
         emit createdNewContractEvent(index, rule);
     }
 
 
-    function getAdmins(uint index) public view returns(address[] memory) {
-        return subcontracts[index].admins;
-    }
+    // function getAdmins(uint index) public view returns(address[] memory) {
+    //     return subcontracts[index].admins;
+    // }
     
-    function getDecliners(uint index) public view returns(address[] memory) {
-        return subcontracts[index].decliners;
-    }
+    // function getDecliners(uint index) public view returns(address[] memory) {
+    //     return subcontracts[index].decliners;
+    // }
 
     function getPaymentInfo(uint index) public view returns(address[] memory, uint[] memory) {
         return (subcontracts[index].payToUsers, subcontracts[index].payAmounts);
     }
 
-    function sendConfirmation(uint index) public {
+    function sendConfirmation(uint index) public onlyOwner {
         
-        address[] memory admins = subcontracts[index].admins;
+        // address[] memory admins = subcontracts[index].admins;
 
-        for (uint i = 0; i < admins.length; i++) {
-            if (admins[i] != msg.sender) {
-                continue;
-            }
+        // for (uint i = 0; i < admins.length; i++) {
+            // if (admins[i] != msg.sender) {
+            //     continue;
+            // }
             //checking if this user have already confiremed this contract
-            require(confirmationStatus[index][i] == 0);
+        // require(confirmationStatus[index][i] == 0);
             
-            confirmationStatus[index][i] = 1;
-            confirmationsCount[index]++;
+        // confirmationStatus[index][i] = 1;
+        // confirmationsCount[index]++;
             
             //
-            emit userConfirmedContractEvent(msg.sender, index);
+        emit userConfirmedContractEvent(msg.sender, index);
             //when contract get minimum confirmations it will be confirmed
-            if (confirmationsCount[index] >= subcontracts[index].minimumConfirmationsCount) {
-                confirmContract(index);
-            }
-        }
-    }
-    
-    function getRule(uint index) public view returns(string memory) {
-        return subcontracts[index].rule;
+            
+        // if (confirmationsCount[index] >= subcontracts[index].minimumConfirmationsCount) {
+        confirmContract(index);
+        // }
     }
 
-    function cancel(uint index) public {
-        address[] memory decliners = subcontracts[index].decliners;
+    // function getRule(uint index) public view returns(string memory) {
+    //     return subcontracts[index].rule;
+    // }
 
-        for (uint i = 0; i < decliners.length; i++) {
-            if (decliners[i] == msg.sender) {
-                contractConfirmationStatus[index] = 2;
-                emit contractCanceledEvent(index);
-            }
-        }
+    function cancel(uint index) public onlyOwner {
+    //     address[] memory decliners = subcontracts[index].decliners;
+
+    //     for (uint i = 0; i < decliners.length; i++) {
+    //         if (decliners[i] == msg.sender) {
+        contractConfirmationStatus[index] = 2;
+        emit contractCanceledEvent(index);
+    //         }
+    //     }
     }
 
     function confirmContract(uint index) private {
