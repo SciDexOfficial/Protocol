@@ -2,18 +2,12 @@
 
 **manager_address** - address
 
+**oracl_address** - address
+
 **service_fee** - float
 
 **rule** - string(json)
 
-**type** - string
+**pay_to_user_address** - address
 
-**minimum_price** - float
-
-**minimum_confirmations_count** - int
-
-**admins_list** - array of addresses
-
-**decliners_list** - array of addresses
-
-**payments_list** - array of structure. Fields: user, amount
+**payments_list** - uint[]
